@@ -15,6 +15,11 @@
   --radius-lg: 22px;
   --radius-md: 18px;
   --radius-sm: 14px;
+  /* SafeCircle risk colors */
+  --safe:       #34a853;
+  --suspicious: #f9ab00;
+  --high-risk:  #ea4335;
+  --emergency:  #d93025;
   font-family: "Avenir Next", "Nunito Sans", "Segoe UI", sans-serif;
 }
 
@@ -415,7 +420,7 @@ button {
 
 .map-stage {
   position: absolute;
-  inset: 62px 0 0;
+  inset: 62px 0 60vh 0;
   overflow: hidden;
 }
 
@@ -723,5 +728,425 @@ button {
   .device-sheet__top {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SAFECIRCLE — Extensions sobre el diseño base
+   ═══════════════════════════════════════════════════════════ */
+
+/* Hero subtitle */
+.hero__sub {
+  margin: 6px 0 0;
+  font-size: 0.88rem;
+  opacity: 0.82;
+}
+
+/* Avatar emoji en hero */
+.avatar {
+  cursor: default;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+.avatar span {
+  font-size: 1.6rem;
+}
+
+/* ── Tarjetas de persona ── */
+.person-avatar-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.person-avatar-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(117, 100, 248, 0.1);
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(117, 100, 248, 0.15);
+}
+.person-emoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+/* Badge de riesgo en tarjeta */
+.card-risk-badge {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* Score meta: sin icono svg */
+.meta--score::before {
+  display: none;
+}
+.meta--score {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Clases de riesgo compartidas */
+.risk--safe       { background: var(--safe) !important; color: #fff !important; }
+.risk--suspicious { background: var(--suspicious) !important; color: #5a3e00 !important; }
+.risk--high-risk  { background: var(--high-risk) !important; color: #fff !important; }
+.risk--emergency  {
+  background: var(--emergency) !important;
+  color: #fff !important;
+  animation: emerg-ring 1.2s ease-in-out infinite;
+}
+
+/* Tarjeta en emergencia */
+.person-card.is-emergency {
+  border-color: rgba(217, 48, 37, 0.4) !important;
+  animation: card-emerg 1.4s ease-in-out infinite;
+}
+
+/* ── Topbar del detalle ── */
+.topbar-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+.topbar-center h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Badge en topbar */
+.risk-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--safe);
+  letter-spacing: 0.04em;
+}
+
+/* ── Mapa Leaflet ── */
+#leaflet-map {
+  height: 100%;
+  width: 100%;
+}
+
+.live-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 500;
+  background: var(--emergency);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  pointer-events: none;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+/* ── Bottom sheet: taller y scrollable ── */
+.device-sheet {
+  height: 60vh;
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 16px 28px;
+}
+
+/* ── Risk header ── */
+.risk-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.risk-meter-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.risk-meter-svg {
+  display: block;
+  transition: none;
+}
+#risk-arc {
+  transition: stroke-dasharray 1s ease, stroke 0.5s ease;
+}
+.risk-score-num {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+.risk-info {
+  flex: 1;
+  min-width: 0;
+}
+.risk-level-text {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.risk-sub {
+  margin: 0 0 2px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Grid de señales 2×3 ── */
+.signals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.signal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 9px 4px 8px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(117, 100, 248, 0.1);
+  background: rgba(255, 255, 255, 0.65);
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+.signal-cell.ok {
+  border-color: var(--safe);
+  background: rgba(52, 168, 83, 0.07);
+}
+.signal-cell.alert {
+  border-color: var(--high-risk);
+  background: rgba(234, 67, 53, 0.07);
+}
+.signal-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.signal-label {
+  font-size: 0.6rem;
+  color: var(--muted);
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ── Alerta Gemini AI ── */
+.ai-alert {
+  background: linear-gradient(135deg, rgba(117, 100, 248, 0.07), rgba(117, 100, 248, 0.03));
+  border: 1px solid rgba(117, 100, 248, 0.2);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  transition: background 0.4s, border-color 0.4s;
+}
+.ai-alert.is-emergency {
+  background: linear-gradient(135deg, rgba(217, 48, 37, 0.1), rgba(217, 48, 37, 0.04));
+  border-color: rgba(217, 48, 37, 0.3);
+}
+.ai-alert__header {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ai-alert.is-emergency .ai-alert__header {
+  color: var(--emergency);
+}
+.ai-alert__text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* ── Botón CTA adaptativo ── */
+.cta-btn {
+  display: block;
+  width: 100%;
+  height: 50px;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 0;
+  margin-bottom: 12px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cta-btn:hover {
+  transform: translateY(-2px);
+}
+.cta-safe {
+  background: rgba(52, 168, 83, 0.1);
+  color: var(--safe);
+  border: 1.5px solid rgba(52, 168, 83, 0.3);
+}
+.cta-monitor {
+  background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(117, 100, 248, 0.3);
+}
+.cta-call {
+  background: linear-gradient(135deg, #ea4335, #c62828);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(234, 67, 53, 0.35);
+}
+.cta-emergency {
+  background: linear-gradient(135deg, var(--emergency), #b71c1c);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(217, 48, 37, 0.45);
+  animation: emerg-ring 1s ease-in-out infinite;
+}
+
+/* ── Historial de riesgo ── */
+.chart-section {
+  margin-bottom: 12px;
+}
+.chart-title {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+#risk-chart-wrap svg {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ── Análisis de comportamiento ── */
+.behavioral-section {
+  background: rgba(117, 100, 248, 0.05);
+  border: 1px solid rgba(117, 100, 248, 0.12);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+.behavioral-header {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  margin-bottom: 5px;
+}
+.behavioral-text {
+  margin: 0;
+  font-size: 0.83rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Acciones ── */
+.sheet-actions {
+  margin-bottom: 14px;
+}
+.primary-button {
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 0;
+  transition: transform 180ms ease;
+  background: linear-gradient(180deg, #7f71fb, #6957ef);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(117, 100, 248, 0.22);
+}
+.primary-button:hover {
+  transform: translateY(-1px);
+}
+
+/* ── Acordeón técnico ── */
+.tech-details {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.tech-details summary {
+  padding: 9px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: var(--radius-sm);
+  list-style: none;
+}
+.tech-details summary::-webkit-details-marker { display: none; }
+.tech-details summary::before { content: "▶ "; font-size: 0.65rem; }
+.tech-details[open] summary::before { content: "▼ "; }
+.tech-content {
+  padding: 10px 12px;
+  font-size: 0.75rem;
+  font-family: "SF Mono", "Fira Code", monospace;
+  color: var(--muted);
+  white-space: pre-wrap;
+  background: rgba(0, 0, 0, 0.02);
+  line-height: 1.6;
+}
+
+/* ── Keyframes SafeCircle ── */
+@keyframes emerg-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.5); }
+  50%       { box-shadow: 0 0 0 10px rgba(217, 48, 37, 0); }
+}
+
+@keyframes card-emerg {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.3), 0 10px 18px rgba(57, 43, 113, 0.04); }
+  50%       { box-shadow: 0 0 0 6px rgba(217, 48, 37, 0.1), 0 10px 18px rgba(57, 43, 113, 0.04); }
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, #e8e8e8 25%, #f2f2f2 50%, #e8e8e8 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px;
+  color: transparent !important;
+}
+
+/* ── Responsive adicional ── */
+@media (max-width: 360px) {
+  .signals-grid {
+    gap: 5px;
+  }
+  .signal-label {
+    font-size: 0.55rem;
+  }
+  .risk-score-num {
+    font-size: 1.2rem;
   }
 }

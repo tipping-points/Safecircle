@@ -1,108 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Find Device</title>
+    <title>SafeCircle</title>
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   </head>
   <body>
     <main class="app-shell">
+
+      <!-- ──────────── SCREEN 1: HOME ──────────── -->
       <section class="screen screen-home is-active" data-screen="home">
         <header class="hero">
           <div class="hero__copy">
-            <p class="hero__eyebrow">Welcome Carlos!</p>
-            <h1>You can track all your devices here</h1>
+            <p class="hero__eyebrow" id="hero-clock">SafeCircle 🛡️</p>
+            <h1>Familia García</h1>
+            <p class="hero__sub">3 personas protegidas</p>
           </div>
-          <button class="avatar" type="button" aria-label="Profile">
-            <span>C</span>
-          </button>
-          <label class="search-bar" aria-label="Find device">
-            <input type="search" placeholder="Find device" />
-            <span class="search-bar__icon" aria-hidden="true"></span>
-          </label>
+          <div class="avatar" aria-label="SafeCircle">
+            <span>🛡</span>
+          </div>
         </header>
 
         <section class="devices">
           <div class="devices__header">
-            <h2>Device connection</h2>
-            <button class="link-button" type="button">Add new device <span>+</span></button>
+            <h2>Estado familiar</h2>
+            <button class="link-button" type="button" id="refresh-all-btn">
+              Actualizar <span id="refresh-icon">↺</span>
+            </button>
           </div>
-
-          <div class="device-grid" id="device-grid"></div>
+          <div class="device-grid" id="person-grid"></div>
         </section>
       </section>
 
-      <section class="screen screen-map" data-screen="map" aria-hidden="true">
+      <!-- ──────────── SCREEN 2: DETAIL ──────────── -->
+      <section class="screen screen-map" data-screen="detail" aria-hidden="true">
         <header class="map-topbar">
-          <button class="icon-button" type="button" id="back-button" aria-label="Back">
+          <button class="icon-button" type="button" id="back-button" aria-label="Volver">
             <span></span>
           </button>
-          <h2>Find device</h2>
+          <div class="topbar-center">
+            <h2 id="detail-name">—</h2>
+            <span class="risk-badge" id="detail-badge">—</span>
+          </div>
           <span class="map-topbar__spacer" aria-hidden="true"></span>
         </header>
 
+        <!-- Mapa Leaflet -->
         <div class="map-stage">
-          <div class="map-pattern" aria-hidden="true"></div>
-          <svg class="route-layer" viewBox="0 0 440 730" preserveAspectRatio="none" aria-hidden="true">
-            <path
-              id="route-path"
-              d="M112 128 C128 145, 145 162, 167 184 L238 256 C255 273, 260 290, 260 322 L260 349 C260 375, 268 396, 286 413 L365 490 C379 504, 384 518, 384 538 L384 560 C384 579, 374 588, 354 588 L149 588 C126 588, 112 600, 112 622 L112 675"
-            />
-          </svg>
-
-          <div class="map-pin map-pin--target">
-            <span class="map-pin__inner"></span>
-          </div>
-
-          <div class="tracker tracker--current">
-            <div class="tracker__radius" id="tracker-radius"></div>
-            <div class="tracker__badge" id="tracker-badge">Radius 2 Km</div>
-            <div class="tracker__pulse"></div>
-            <div class="tracker__marker">
-              <span></span>
-            </div>
-          </div>
+          <div id="leaflet-map"></div>
+          <div class="live-badge" id="live-badge">● LIVE</div>
         </div>
 
-        <aside class="device-sheet">
+        <!-- Bottom sheet con datos SafeCircle -->
+        <aside class="device-sheet" id="device-sheet">
           <div class="sheet-handle" aria-hidden="true"></div>
-          <div class="device-sheet__top">
-            <div>
-              <h3 id="sheet-name">ZTE Phone</h3>
-              <p id="sheet-status">Active 23 min ago</p>
+
+          <!-- Risk header: medidor + info -->
+          <div class="risk-header">
+            <div class="risk-meter-wrap">
+              <svg class="risk-meter-svg" viewBox="0 0 110 65" width="100" height="65">
+                <path d="M10 60 A 45 45 0 0 1 100 60"
+                      fill="none" stroke="#e8e8e8" stroke-width="11" stroke-linecap="round"/>
+                <path id="risk-arc" d="M10 60 A 45 45 0 0 1 100 60"
+                      fill="none" stroke="#34a853" stroke-width="11" stroke-linecap="round"
+                      stroke-dasharray="0 142"/>
+              </svg>
+              <div class="risk-score-num" id="risk-score">—</div>
             </div>
-            <div class="device-sheet__stats">
-              <span id="sheet-battery">77%</span>
-              <span id="sheet-distance">2 Km</span>
+            <div class="risk-info">
+              <p class="risk-level-text" id="risk-level-text">Analizando…</p>
+              <p class="risk-sub" id="risk-sub">Cargando datos de red…</p>
+              <p class="risk-sub" id="risk-kalman">📍 —</p>
             </div>
           </div>
-          <div class="device-sheet__actions">
-            <button class="primary-button" type="button">Play Sound</button>
-            <button class="dark-button" type="button">Lock Device</button>
+
+          <!-- Señales de red 2×3 -->
+          <div class="signals-grid" id="signals-grid">
+            <div class="signal-cell" id="sig-sim">
+              <span class="signal-icon">⏳</span><span class="signal-label">SIM Swap</span>
+            </div>
+            <div class="signal-cell" id="sig-num">
+              <span class="signal-icon">⏳</span><span class="signal-label">Número</span>
+            </div>
+            <div class="signal-cell" id="sig-fwd">
+              <span class="signal-icon">⏳</span><span class="signal-label">Desvío</span>
+            </div>
+            <div class="signal-cell" id="sig-ten">
+              <span class="signal-icon">⏳</span><span class="signal-label">Antigüedad</span>
+            </div>
+            <div class="signal-cell" id="sig-ver">
+              <span class="signal-icon">⏳</span><span class="signal-label">Verificado</span>
+            </div>
+            <div class="signal-cell" id="sig-zon">
+              <span class="signal-icon">⏳</span><span class="signal-label">Zona segura</span>
+            </div>
           </div>
+
+          <!-- Alerta Gemini -->
+          <div class="ai-alert" id="ai-alert">
+            <div class="ai-alert__header">✨ Análisis Gemini AI</div>
+            <p class="ai-alert__text" id="ai-alert-text">Generando análisis inteligente…</p>
+          </div>
+
+          <!-- Botón CTA adaptativo -->
+          <button class="cta-btn cta-safe" id="cta-btn" type="button">
+            Todo en orden ✓
+          </button>
+
+          <!-- Historial de riesgo -->
+          <div class="chart-section" id="chart-section">
+            <h4 class="chart-title">📈 Historial de riesgo</h4>
+            <div id="risk-chart-wrap"></div>
+          </div>
+
+          <!-- Análisis de comportamiento -->
+          <div class="behavioral-section" id="behavioral-section">
+            <div class="behavioral-header">🧠 Análisis de comportamiento</div>
+            <p class="behavioral-text" id="behavioral-text">—</p>
+          </div>
+
+          <!-- Acciones -->
+          <div class="sheet-actions">
+            <button class="primary-button" id="check-btn" type="button">
+              Nuevo chequeo 🔄
+            </button>
+          </div>
+
+          <!-- Detalles técnicos -->
+          <details class="tech-details">
+            <summary>Detalles técnicos</summary>
+            <div class="tech-content" id="tech-content">—</div>
+          </details>
         </aside>
       </section>
+
     </main>
 
-    <template id="device-card-template">
-      <article class="device-card">
-        <button class="device-card__open" type="button" aria-label="Open tracking view"></button>
-        <div class="device-card__illustration" aria-hidden="true">
-          <div class="device-outline"></div>
+    <!-- Template: tarjeta de persona -->
+    <template id="person-card-template">
+      <article class="device-card person-card">
+        <button class="device-card__open" type="button" aria-label="Ver detalle"></button>
+        <div class="device-card__illustration person-avatar-wrap" aria-hidden="true">
+          <div class="person-avatar-circle">
+            <span class="person-emoji"></span>
+          </div>
+          <span class="card-risk-badge"></span>
         </div>
         <h3 class="device-card__name"></h3>
         <p class="device-card__activity"></p>
         <div class="device-card__meta">
-          <span class="meta meta--battery"></span>
-          <span class="meta meta--distance"></span>
-          <button class="device-card__arrow" type="button" aria-label="Track device">
+          <span class="meta meta--score"></span>
+          <button class="device-card__arrow" type="button" aria-label="Ver detalle">
             <span></span>
           </button>
         </div>
       </article>
     </template>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="./script.js"></script>
   </body>
 </html>
