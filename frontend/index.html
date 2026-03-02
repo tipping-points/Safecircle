@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find Device</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="screen screen-home is-active" data-screen="home">
+        <header class="hero">
+          <div class="hero__copy">
+            <p class="hero__eyebrow">Welcome Carlos!</p>
+            <h1>You can track all your devices here</h1>
+          </div>
+          <button class="avatar" type="button" aria-label="Profile">
+            <span>C</span>
+          </button>
+          <label class="search-bar" aria-label="Find device">
+            <input type="search" placeholder="Find device" />
+            <span class="search-bar__icon" aria-hidden="true"></span>
+          </label>
+        </header>
+
+        <section class="devices">
+          <div class="devices__header">
+            <h2>Device connection</h2>
+            <button class="link-button" type="button">Add new device <span>+</span></button>
+          </div>
+
+          <div class="device-grid" id="device-grid"></div>
+        </section>
+      </section>
+
+      <section class="screen screen-map" data-screen="map" aria-hidden="true">
+        <header class="map-topbar">
+          <button class="icon-button" type="button" id="back-button" aria-label="Back">
+            <span></span>
+          </button>
+          <h2>Find device</h2>
+          <span class="map-topbar__spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="map-stage">
+          <div class="map-pattern" aria-hidden="true"></div>
+          <svg class="route-layer" viewBox="0 0 440 730" preserveAspectRatio="none" aria-hidden="true">
+            <path
+              id="route-path"
+              d="M112 128 C128 145, 145 162, 167 184 L238 256 C255 273, 260 290, 260 322 L260 349 C260 375, 268 396, 286 413 L365 490 C379 504, 384 518, 384 538 L384 560 C384 579, 374 588, 354 588 L149 588 C126 588, 112 600, 112 622 L112 675"
+            />
+          </svg>
+
+          <div class="map-pin map-pin--target">
+            <span class="map-pin__inner"></span>
+          </div>
+
+          <div class="tracker tracker--current">
+            <div class="tracker__radius" id="tracker-radius"></div>
+            <div class="tracker__badge" id="tracker-badge">Radius 2 Km</div>
+            <div class="tracker__pulse"></div>
+            <div class="tracker__marker">
+              <span></span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="device-sheet">
+          <div class="sheet-handle" aria-hidden="true"></div>
+          <div class="device-sheet__top">
+            <div>
+              <h3 id="sheet-name">ZTE Phone</h3>
+              <p id="sheet-status">Active 23 min ago</p>
+            </div>
+            <div class="device-sheet__stats">
+              <span id="sheet-battery">77%</span>
+              <span id="sheet-distance">2 Km</span>
+            </div>
+          </div>
+          <div class="device-sheet__actions">
+            <button class="primary-button" type="button">Play Sound</button>
+            <button class="dark-button" type="button">Lock Device</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <template id="device-card-template">
+      <article class="device-card">
+        <button class="device-card__open" type="button" aria-label="Open tracking view"></button>
+        <div class="device-card__illustration" aria-hidden="true">
+          <div class="device-outline"></div>
+        </div>
+        <h3 class="device-card__name"></h3>
+        <p class="device-card__activity"></p>
+        <div class="device-card__meta">
+          <span class="meta meta--battery"></span>
+          <span class="meta meta--distance"></span>
+          <button class="device-card__arrow" type="button" aria-label="Track device">
+            <span></span>
+          </button>
+        </div>
+      </article>
+    </template>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
