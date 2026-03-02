@@ -78,13 +78,12 @@ class AIClient:
     """
 
     def __init__(self):
-        self._model = None
+        self._client = None
         if settings.GEMINI_API_KEY:
             try:
-                import google.generativeai as genai
-                genai.configure(api_key=settings.GEMINI_API_KEY)
-                self._model = genai.GenerativeModel("gemini-1.5-flash")
-                logger.info("Gemini AI initialized")
+                from google import genai
+                self._client = genai.Client(api_key=settings.GEMINI_API_KEY)
+                logger.info("Gemini AI initialized (google-genai SDK)")
             except Exception as e:
                 logger.warning(f"Failed to init Gemini, using mock responses: {e}")
         else:
@@ -105,7 +104,7 @@ class AIClient:
             (alert_text, recommendation)
             recommendation is one of: SAFE, MONITOR, CALL_NOW, EMERGENCY
         """
-        if self._model is None:
+        if self._client is None:
             return _pick_mock_response(risk_level)
 
         prompt = _PROMPT_TEMPLATE.format(
@@ -125,7 +124,10 @@ class AIClient:
         )
 
         try:
-            response = self._model.generate_content(prompt)
+            response = self._client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+            )
             text = response.text.strip()
             alert = ""
             recommendation = "MONITOR"

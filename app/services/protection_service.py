@@ -72,7 +72,7 @@ class ProtectionService:
 
         # 2. Location: check against expected zone if provided
         outside_safe_zone = False
-        if "expected_lat" in context and "expected_lon" in context:
+        if context.get("expected_lat") is not None and context.get("expected_lon") is not None:
             geo = self._location_svc.check_geofence(
                 phone_number=phone_number,
                 latitude=context["expected_lat"],
