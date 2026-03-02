@@ -128,7 +128,12 @@ class AIClient:
                 model="gemini-2.5-flash",
                 contents=prompt,
             )
-            text = response.text.strip()
+            raw = response.text.strip()
+            # Fix double UTF-8 encoding that can occur with some Gemini SDK versions
+            try:
+                text = raw.encode("latin-1").decode("utf-8")
+            except (UnicodeDecodeError, UnicodeEncodeError):
+                text = raw
             alert = ""
             recommendation = "MONITOR"
             for line in text.splitlines():

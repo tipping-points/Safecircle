@@ -21,6 +21,13 @@ class SignalsDetail(BaseModel):
     device_inactive: bool
 
 
+class BehavioralDetail(BaseModel):
+    anomaly_score:   int
+    anomaly_reasons: list[str]
+    nearest_anchor:  str
+    distance_km:     float
+
+
 class ProtectionContext(BaseModel):
     expected_zone: str = Field("home", example="home")
     hour: int = Field(12, example=22)
@@ -37,8 +44,9 @@ class FullCheckRequest(BaseModel):
 
 class FullCheckResponse(BaseModel):
     phone_number: str
-    risk_score: int
-    risk_level: str
-    signals: SignalsDetail
-    ai_alert: str
+    risk_score:   int
+    risk_level:   str
+    signals:      SignalsDetail
+    behavioral:   Optional[BehavioralDetail] = None
+    ai_alert:     str
     recommendation: str
