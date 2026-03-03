@@ -201,16 +201,42 @@
               🛡️ Detector de Estafas
               <span class="scam-badge-gemini">Gemini AI</span>
             </div>
-            <p class="scam-section__sub">Pega aquí un SMS, WhatsApp o correo sospechoso</p>
+            <p class="scam-section__sub">SafeCircle analiza tus mensajes entrantes automáticamente</p>
+
+            <!-- Tarjeta de mensaje entrante (aparece al simular) -->
+            <div class="scam-incoming" id="scam-incoming" style="display:none">
+              <div class="scam-incoming__meta">
+                <span class="scam-incoming__icon">📱</span>
+                <div class="scam-incoming__info">
+                  <div class="scam-incoming__from" id="scam-incoming-from">SMS</div>
+                  <div class="scam-incoming__time">Ahora mismo</div>
+                </div>
+                <span class="scam-incoming__new-badge">NUEVO</span>
+              </div>
+              <div class="scam-incoming__alert">
+                <span class="scam-incoming__alert-icon">⚠️</span>
+                <p class="scam-incoming__alert-text">
+                  SafeCircle ha detectado que este mensaje podría ser una
+                  <strong>estafa</strong>. <strong>No lo abras.</strong>
+                </p>
+              </div>
+            </div>
+
+            <!-- Botón simular SMS entrante -->
             <button class="scam-sim-btn" id="scam-sim-btn" type="button">
               📱 Simular SMS entrante
             </button>
-            <textarea class="scam-textarea" id="scam-textarea"
-              placeholder="Ej: «Su cuenta bancaria ha sido bloqueada. Haga clic en este enlace urgentemente…»"
-              rows="4"></textarea>
-            <button class="scam-analyze-btn" id="scam-analyze-btn" type="button">
-              🔍 Analizar con Gemini
-            </button>
+
+            <!-- Análisis manual (colapsado por defecto) -->
+            <details class="scam-manual-details">
+              <summary>✏️ Analizar texto manualmente</summary>
+              <textarea class="scam-textarea" id="scam-textarea"
+                placeholder="Pega aquí un SMS, WhatsApp o correo sospechoso…"
+                rows="3"></textarea>
+              <button class="scam-analyze-btn" id="scam-analyze-btn" type="button">
+                🔍 Analizar con Gemini
+              </button>
+            </details>
 
             <!-- Resultado -->
             <div class="scam-result" id="scam-result" style="display:none">

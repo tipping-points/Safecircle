@@ -1633,41 +1633,74 @@ button {
 
 /* Botón simular SMS */
 .scam-sim-btn {
-  width: 100%; height: 38px; margin-bottom: 8px;
-  border-radius: 10px; font-size: 0.88rem; font-weight: 700;
-  cursor: pointer; border: 1.5px dashed rgba(117,100,248,0.4);
-  background: rgba(117,100,248,0.06); color: var(--primary);
-  transition: background 180ms ease, transform 180ms ease;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.scam-sim-btn:hover { background: rgba(117,100,248,0.12); transform: translateY(-1px); }
-
-/* Toast notification SMS */
-.sms-toast {
-  position: fixed;
-  top: 72px; left: 50%; transform: translateX(-50%);
-  z-index: 999;
-  background: #1a1a2e;
+  width: 100%; height: 42px; margin-bottom: 10px;
+  border-radius: 10px; font-size: 0.9rem; font-weight: 700;
+  cursor: pointer; border: 0;
+  background: linear-gradient(135deg, #1a1a2e, #2d1b4e);
   color: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.scam-sim-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.24); }
+
+/* Tarjeta de mensaje entrante sospechoso */
+.scam-incoming {
+  background: linear-gradient(135deg, rgba(234,67,53,0.07), rgba(234,67,53,0.02));
+  border: 1.5px solid rgba(234,67,53,0.35);
   border-radius: 14px;
-  padding: 10px 16px;
-  font-size: 0.82rem;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-  display: flex; align-items: center; gap: 10px;
-  min-width: 260px; max-width: 380px;
-  animation: toast-in 300ms ease both;
-  border: 1px solid rgba(255,255,255,0.1);
+  padding: 14px;
+  margin-bottom: 12px;
+  animation: fade-up 280ms ease both;
 }
-.sms-toast__sender {
-  font-weight: 800; font-size: 0.78rem;
-  color: #ea4335; letter-spacing: 0.04em;
+.scam-incoming__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
 }
-.sms-toast__preview {
-  font-size: 0.78rem; color: rgba(255,255,255,0.75);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  max-width: 180px;
+.scam-incoming__icon { font-size: 1.7rem; line-height: 1; flex-shrink: 0; }
+.scam-incoming__info { flex: 1; }
+.scam-incoming__from {
+  font-size: 0.9rem; font-weight: 800; color: var(--text);
 }
-@keyframes toast-in {
-  from { opacity:0; transform: translateX(-50%) translateY(-14px); }
-  to   { opacity:1; transform: translateX(-50%) translateY(0); }
+.scam-incoming__time {
+  font-size: 0.72rem; color: var(--muted);
 }
+.scam-incoming__new-badge {
+  background: var(--high-risk); color: #fff;
+  font-size: 0.58rem; font-weight: 800;
+  padding: 3px 8px; border-radius: 999px;
+  letter-spacing: 0.06em;
+  animation: emerg-ring 1.4s ease-in-out infinite;
+}
+.scam-incoming__alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(255,255,255,0.65);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.scam-incoming__alert-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.scam-incoming__alert-text {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* Análisis manual colapsado */
+.scam-manual-details {
+  margin-bottom: 10px;
+}
+.scam-manual-details summary {
+  font-size: 0.8rem; color: var(--muted);
+  cursor: pointer; padding: 6px 2px;
+  list-style: none; user-select: none;
+}
+.scam-manual-details summary::-webkit-details-marker { display: none; }
+.scam-manual-details summary::before { content: "▶ "; font-size: 0.6rem; }
+.scam-manual-details[open] summary::before { content: "▼ "; }
+.scam-manual-details .scam-textarea { margin-top: 8px; }
+.scam-manual-details .scam-analyze-btn { margin-top: 8px; }

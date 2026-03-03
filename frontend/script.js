@@ -808,33 +808,21 @@ const SCAM_SMS_SAMPLES = [
 
 let _scamSampleIdx = 0;
 
-function showSmsToast(sender, preview) {
-  const existing = document.querySelector('.sms-toast');
-  if (existing) existing.remove();
-
-  const toast = document.createElement('div');
-  toast.className = 'sms-toast';
-  toast.innerHTML = `
-    <span style="font-size:1.4rem">📱</span>
-    <div>
-      <div class="sms-toast__sender">SMS · ${sender}</div>
-      <div class="sms-toast__preview">${preview}</div>
-    </div>
-  `;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 4000);
-}
-
 $('scam-sim-btn').addEventListener('click', () => {
   const sample = SCAM_SMS_SAMPLES[_scamSampleIdx % SCAM_SMS_SAMPLES.length];
   _scamSampleIdx++;
 
+  // Mostrar tarjeta de mensaje entrante sospechoso
+  $('scam-incoming-from').textContent = `SMS · ${sample.sender}`;
+  $('scam-incoming').style.display = 'block';
+  $('scam-incoming').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // Rellenar textarea (oculto bajo details) para el análisis
   $('scam-textarea').value = sample.text;
   $('scam-result').style.display = 'none';
-  showSmsToast(sample.sender, sample.text.slice(0, 60) + '…');
 
-  // Auto-trigger analysis after a brief delay (realistic feel)
-  setTimeout(() => $('scam-analyze-btn').click(), 1200);
+  // Analizar automáticamente tras un breve instante (realismo)
+  setTimeout(() => $('scam-analyze-btn').click(), 900);
 });
 
 // ── Scam Detector ─────────────────────────────────────────────
