@@ -49,11 +49,10 @@ PROFILES: dict[str, BehaviorProfile] = {
     "+34640197102": BehaviorProfile(
         name="Aitor",
         anchor_locations=[
-            {"label": "Casa", "lat": 41.4004, "lon": 2.1939},
-            {"label": "Fira Barcelona", "lat": 41.3571, "lon": 2.1271},
+            {"label": "Fira Montjuïc (Nokia NaC)", "lat": 41.3885, "lon": 2.1781},
         ],
         active_hours=(7, 22),
-        normal_radius_km=5.0,    # wider: Nokia ±1km accuracy
+        normal_radius_km=0.6,
         normal_inactive_min=90,
         min_tenure_days=14,
     ),

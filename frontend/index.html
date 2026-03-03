@@ -126,6 +126,15 @@
             <button class="primary-button" id="check-btn" type="button">
               Nuevo chequeo 🔄
             </button>
+            <button class="demo-walk-btn" id="demo-walk-btn" type="button" style="display:none">
+              🚶 Demo: Salir de zona
+            </button>
+            <button class="agent-launch-btn" id="agent-launch-btn" type="button" style="display:none">
+              🤖 Analizar con Agente IA
+            </button>
+            <button class="companion-launch-btn" id="companion-launch-btn" type="button">
+              🤝 Companion IA &amp; Detector Estafas
+            </button>
           </div>
 
           <!-- Detalles técnicos -->
@@ -134,6 +143,121 @@
             <div class="tech-content" id="tech-content">—</div>
           </details>
         </aside>
+      </section>
+
+      <!-- ──────────── SCREEN 3: COMPANION ──────────── -->
+      <section class="screen screen-companion" data-screen="companion" aria-hidden="true">
+        <header class="companion-topbar">
+          <button class="icon-button" type="button" id="companion-back-btn" aria-label="Volver">
+            <span></span>
+          </button>
+          <div class="topbar-center">
+            <h2 id="companion-title">🤝 Companion IA</h2>
+            <span class="companion-sub" id="companion-sub">Nokia NaC · Gemini AI</span>
+          </div>
+          <span class="map-topbar__spacer"></span>
+        </header>
+
+        <div class="companion-body">
+
+          <!-- Avatar + estado -->
+          <div class="companion-hero" id="companion-hero">
+            <div class="companion-avatar" id="companion-avatar">👴</div>
+            <div class="companion-status-wrap">
+              <span class="companion-status-badge" id="companion-status-badge">Analizando…</span>
+              <p class="companion-location-hint" id="companion-location-hint">Consultando Nokia NaC…</p>
+            </div>
+          </div>
+
+          <!-- Chat bubble del Companion -->
+          <div class="companion-chat" id="companion-chat">
+            <div class="companion-chat__bubble" id="companion-chat-bubble">
+              <div class="companion-chat__spinner"></div>
+            </div>
+            <button class="companion-refresh-btn" id="companion-refresh-btn" type="button">
+              ↺ Nuevo mensaje
+            </button>
+          </div>
+
+          <!-- Separador Nokia NaC signals -->
+          <div class="companion-signals" id="companion-signals">
+            <div class="csig" id="csig-zone">
+              <span class="csig__icon">📍</span>
+              <span class="csig__label" id="csig-zone-label">—</span>
+            </div>
+            <div class="csig" id="csig-reach">
+              <span class="csig__icon">📶</span>
+              <span class="csig__label" id="csig-reach-label">—</span>
+            </div>
+            <div class="csig" id="csig-time">
+              <span class="csig__icon">⏰</span>
+              <span class="csig__label" id="csig-time-label">—</span>
+            </div>
+          </div>
+
+          <!-- ── SCAM DETECTOR ── -->
+          <div class="scam-section">
+            <div class="scam-section__header">
+              🛡️ Detector de Estafas
+              <span class="scam-badge-gemini">Gemini AI</span>
+            </div>
+            <p class="scam-section__sub">Pega aquí un SMS, WhatsApp o correo sospechoso</p>
+            <button class="scam-sim-btn" id="scam-sim-btn" type="button">
+              📱 Simular SMS entrante
+            </button>
+            <textarea class="scam-textarea" id="scam-textarea"
+              placeholder="Ej: «Su cuenta bancaria ha sido bloqueada. Haga clic en este enlace urgentemente…»"
+              rows="4"></textarea>
+            <button class="scam-analyze-btn" id="scam-analyze-btn" type="button">
+              🔍 Analizar con Gemini
+            </button>
+
+            <!-- Resultado -->
+            <div class="scam-result" id="scam-result" style="display:none">
+              <div class="scam-result__verdict" id="scam-verdict"></div>
+              <div class="scam-result__type"    id="scam-type"></div>
+              <p class="scam-result__explanation" id="scam-explanation"></p>
+              <div class="scam-signals"          id="scam-signals"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ──────────── SCREEN 4: AGENT ──────────── -->
+      <section class="screen screen-agent" data-screen="agent" aria-hidden="true">
+        <header class="agent-topbar">
+          <button class="icon-button" type="button" id="agent-back-btn" aria-label="Volver">
+            <span></span>
+          </button>
+          <div class="topbar-center">
+            <h2>🤖 Agente SafeCircle</h2>
+            <span class="agent-sub">Nokia NaC + Gemini AI · MCP</span>
+          </div>
+          <span class="map-topbar__spacer"></span>
+        </header>
+
+        <div class="agent-body">
+          <!-- Pregunta del usuario -->
+          <div class="agent-question" id="agent-question-box">
+            <span class="agent-question__label">Analizando</span>
+            <p class="agent-question__text" id="agent-question-text">¿Está esta persona en peligro?</p>
+          </div>
+
+          <!-- Feed de pasos -->
+          <div class="agent-feed" id="agent-feed"></div>
+
+          <!-- Respuesta final Gemini -->
+          <div class="agent-final" id="agent-final" style="display:none">
+            <div class="agent-final__header">✨ Síntesis Gemini AI</div>
+            <p class="agent-final__text" id="agent-final-text"></p>
+          </div>
+
+          <!-- Botón reiniciar -->
+          <button class="agent-retry-btn" id="agent-retry-btn" style="display:none" type="button">
+            🔄 Analizar de nuevo
+          </button>
+        </div>
       </section>
 
     </main>

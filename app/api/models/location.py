@@ -10,6 +10,8 @@ class LocationResponse(BaseModel):
     accuracy_meters: int
     timestamp: str
     source: str
+    kalman_confidence: float = 0.0
+    kalman_readings: int = 0
 
 
 class GeofenceRequest(BaseModel):

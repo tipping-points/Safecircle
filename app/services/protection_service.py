@@ -70,7 +70,21 @@ class ProtectionService:
         outside_safe_zone = False
         location_data: dict | None = None
 
-        if context.get("expected_lat") is not None and context.get("expected_lon") is not None:
+        force_lat = context.get("force_lat")
+        force_lon = context.get("force_lon")
+
+        if force_lat is not None and force_lon is not None:
+            # Demo mode: use supplied coords instead of Nokia NaC
+            location_data = {
+                "latitude": force_lat, "longitude": force_lon,
+                "accuracy_meters": 80, "source": "demo",
+            }
+            if context.get("expected_lat") is not None:
+                dlat = (force_lat - context["expected_lat"]) * 111_000
+                dlon = (force_lon - context["expected_lon"]) * 111_000 * 0.7
+                dist = (dlat**2 + dlon**2) ** 0.5
+                outside_safe_zone = dist > context.get("radius_meters", 500)
+        elif context.get("expected_lat") is not None and context.get("expected_lon") is not None:
             geo = self._location_svc.check_geofence(
                 phone_number=phone_number,
                 latitude=context["expected_lat"],
