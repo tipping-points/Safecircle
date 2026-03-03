@@ -952,6 +952,102 @@ button {
   letter-spacing: 0.02em;
 }
 
+/* ── Nokia NaC API Live Log ── */
+.nac-log {
+  background: #0d1117;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 14px;
+  border: 1px solid rgba(0, 188, 212, 0.2);
+}
+.nac-log__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(90deg, #001f2e, #002d3f);
+  border-bottom: 1px solid rgba(0, 188, 212, 0.15);
+}
+.nac-log__logo {
+  font-size: 0.68rem;
+  font-weight: 900;
+  color: #00bcd4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(0, 188, 212, 0.12);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 188, 212, 0.3);
+}
+.nac-log__title {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.55);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex: 1;
+}
+.nac-log__dot {
+  font-size: 0.7rem;
+  color: #34a853;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+.nac-log__rows {
+  padding: 6px 4px;
+}
+.nac-row {
+  display: grid;
+  grid-template-columns: 20px 1fr auto auto;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  transition: background 200ms;
+}
+.nac-row:hover { background: rgba(255,255,255,0.04); }
+.nac-row__icon  { font-size: 0.85rem; text-align: center; }
+.nac-row__name  {
+  font-size: 0.72rem;
+  color: #8899bb;
+  font-family: "SF Mono", "Fira Code", monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nac-row__badge {
+  font-size: 0.58rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.nac-row__badge--ok   { background: rgba(52,168,83,0.18);  color: #34a853; border: 1px solid rgba(52,168,83,0.3); }
+.nac-row__badge--warn { background: rgba(234,67,53,0.18);  color: #ea4335; border: 1px solid rgba(234,67,53,0.3); }
+.nac-row__value {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.65);
+  font-family: "SF Mono", "Fira Code", monospace;
+  white-space: nowrap;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+.nac-row--ok   .nac-row__name  { color: #aabbcc; }
+.nac-row--warn .nac-row__name  { color: #ff9999; }
+.nac-row--loading {
+  grid-template-columns: 20px 1fr;
+  padding: 8px 10px;
+}
+.nac-row__spinner {
+  width: 12px; height: 12px;
+  border: 2px solid rgba(0,188,212,0.2);
+  border-top-color: #00bcd4;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
 /* ── Alerta Gemini AI ── */
 .ai-alert {
   background: linear-gradient(135deg, rgba(117, 100, 248, 0.07), rgba(117, 100, 248, 0.03));

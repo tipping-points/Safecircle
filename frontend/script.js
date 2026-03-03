@@ -42,6 +42,7 @@ const state = {
   trailLine: null,
   refreshInterval: null,
   lastCheckTime: {},    // { [phone]: Date }
+  lastLocation: {},     // { [phone]: locData }
 };
 
 // ─────────────────────────────────────────────────────────────────
@@ -224,6 +225,9 @@ function renderDetail(data, person) {
     }
     $('behavioral-text').textContent = bText;
   }
+
+  // Nokia NaC API Log
+  renderApiLog(data.signals, state.lastLocation[person.phone]);
 
   // Detalles técnicos
   const s = data.signals;
@@ -481,6 +485,15 @@ function updateMap(locData, person) {
 
   // LIVE badge
   $('live-badge').style.display = 'block';
+
+  // Guardar última ubicación para el API log
+  state.lastLocation[person.phone] = locData;
+
+  // Refrescar API log si seguimos en la pantalla de esta persona
+  const cached = state.persons[person.phone];
+  if (cached && state.currentIdx !== null && PERSONS[state.currentIdx].phone === person.phone) {
+    renderApiLog(cached.signals, locData);
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -603,6 +616,64 @@ $('refresh-all-btn').addEventListener('click', refreshAll);
 // ─────────────────────────────────────────────────────────────────
 //  Reset UI al abrir detalle sin datos
 // ─────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  Nokia NaC API Live Log
+// ─────────────────────────────────────────────────────────────────
+function renderApiLog(signals, locData) {
+  const rows = $('nac-rows');
+  if (!rows) return;
+
+  const ts = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  const apis = [
+    {
+      icon: '🔐', name: 'sim-swap/v0/check',
+      ok: !signals.sim_swapped,
+      value: signals.sim_swapped ? '⚠ SIM cambiada' : `SIM estable · ${signals.tenure_days}d`,
+    },
+    {
+      icon: '✅', name: 'number-verification/v0/verify',
+      ok: signals.is_verified,
+      value: signals.is_verified ? 'Verificado' : 'No verificado',
+    },
+    {
+      icon: '📞', name: 'call-forwarding-signal/v0/retrieve',
+      ok: !signals.call_forwarding_active,
+      value: signals.call_forwarding_active ? '⚠ Desvío activo' : 'Sin desvíos',
+    },
+    {
+      icon: '📡', name: 'location-retrieval/v0/retrieve',
+      ok: true,
+      value: locData
+        ? `${locData.latitude.toFixed(4)},${locData.longitude.toFixed(4)} ±${locData.accuracy_meters}m`
+        : 'Obteniendo…',
+    },
+    {
+      icon: '🏠', name: 'location-verification/v0/verify',
+      ok: !signals.outside_safe_zone,
+      value: signals.outside_safe_zone ? 'Fuera de zona' : 'Dentro de zona',
+    },
+    {
+      icon: '📶', name: 'device-reachability-status/v0/retrieve',
+      ok: !signals.device_inactive,
+      value: signals.device_inactive ? 'Sin cobertura' : 'Activo en red',
+    },
+  ];
+
+  rows.innerHTML = apis.map(api => `
+    <div class="nac-row nac-row--${api.ok ? 'ok' : 'warn'}">
+      <span class="nac-row__icon">${api.icon}</span>
+      <span class="nac-row__name">${api.name}</span>
+      <span class="nac-row__badge nac-row__badge--${api.ok ? 'ok' : 'warn'}">200 OK</span>
+      <span class="nac-row__value" title="${api.value}">${api.value}</span>
+    </div>
+  `).join('');
+
+  // Timestamp en el dot
+  const dot = $('nac-dot');
+  if (dot) dot.title = `Última llamada: ${ts}`;
+}
+
 function resetDetailUI() {
   $('risk-score').textContent  = '…';
   $('risk-score').style.color  = '#aaa';
@@ -616,6 +687,12 @@ function resetDetailUI() {
   $('behavioral-text').textContent = '—';
   $('tech-content').textContent = '—';
   $('chart-section').style.display = 'none';
+  const nacRows = $('nac-rows');
+  if (nacRows) nacRows.innerHTML = `
+    <div class="nac-row nac-row--loading">
+      <span class="nac-row__spinner"></span>
+      <span class="nac-row__name">Consultando Nokia Network as Code…</span>
+    </div>`;
   ['sig-sim','sig-num','sig-fwd','sig-ten','sig-ver','sig-zon'].forEach(id => {
     const el = $(id);
     el.className = 'signal-cell';
